@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تفاصيل التذكرة</title>
+    <style>
+        body { font-family: 'Cairo', sans-serif; margin: 0; padding: 20px; font-size: 12px; line-height: 1.6; }
+        .container { width: 100%; margin: 0 auto; border: 1px solid #eee; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { font-size: 20px; color: #333; margin: 0; }
+        .header p { font-size: 10px; color: #777; }
+        .section-title { font-size: 14px; font-weight: bold; color: #555; margin-top: 20px; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .info-grid { display: table; width: 100%; border-collapse: collapse; }
+        .info-row { display: table-row; }
+        .info-label, .info-value { display: table-cell; padding: 5px 10px; border-bottom: 1px solid #f0f0f0; }
+        .info-label { font-weight: bold; width: 30%; background-color: #f9f9f9; }
+        .info-value { width: 70%; }
+        .status-badge { display: inline-block; padding: 3px 8px; border-radius: 15px; font-size: 10px; font-weight: bold; text-align: center; }
+        .status-entered { background-color: #FEF3C7; color: #92400E; }
+        .status-in_progress { background-color: #DBEAFE; color: #1E40AF; }
+        .status-fixed { background-color: #D1FAE5; color: #065F46; }
+        .status-closed { background-color: #E5E7EB; color: #374151; }
+        .problem-item { border: 1px solid #eee; padding: 10px; margin-bottom: 10px; border-radius: 5px; background-color: #fdfdfd; }
+        .problem-item h4 { margin: 0 0 5px 0; font-size: 12px; color: #444; }
+        .problem-item p { margin: 0; font-size: 11px; color: #666; }
+        .problem-resolved { background-color: #D1FAE5; color: #065F46; }
+        .problem-pending { background-color: #FEF3C7; color: #92400E; }
+        .problem-critical { background-color: #FEE2E2; color: #DC2626; }
+        .footer { text-align: center; margin-top: 30px; font-size: 10px; color: #aaa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>تقرير تفاصيل التذكرة</h1>
+            <p>تاريخ التقرير: {{ report_date }}</p>
+        </div>
+
+        <div class="section-title">معلومات الجهاز</div>
+        <div class="info-grid">
+            <div class="info-row"><div class="info-label">رقم التذكرة:</div><div class="info-value">{{ device.ticket_number }}</div></div>
+            <div class="info-row"><div class="info-label">رقم الصنف:</div><div class="info-value">{{ device.item_number }}</div></div>
+            <div class="info-row"><div class="info-label">المواصفات:</div><div class="info-value">{{ device.specs }}</div></div>
+            <div class="info-row"><div class="info-label">الرقم التسلسلي:</div><div class="info-value">{{ device.serial_number }}</div></div>
+            <div class="info-row"><div class="info-label">الموظف:</div><div class="info-value">{{ device.employee_name }}</div></div>
+            <div class="info-row"><div class="info-label">الفرع:</div><div class="info-value">{{ device.branch_name }}</div></div>
+            <div class="info-row"><div class="info-label">نوع المشكلة:</div><div class="info-value">{{ device.problem_type }}</div></div>
+            <div class="info-row"><div class="info-label">طبيعة المشكلة:</div><div class="info-value">{{ device.problem_nature }}</div></div>
+            <div class="info-row"><div class="info-label">مع الشاحن:</div><div class="info-value">{{ device.with_charger }}</div></div>
+            <div class="info-row"><div class="info-label">الفني المسؤول:</div><div class="info-value">{{ device.assigned_technician }}</div></div>
+            <div class="info-row"><div class="info-label">الحالة:</div><div class="info-value"><span class="status-badge {{ device.status_class }}">{{ device.status_text }}</span></div></div>
+        </div>
+
+        <div class="section-title">المشاكل المبلغ عنها ({{ device.problem_count }})</div>
+        {% if device.problems %}
+            {% for problem in device.problems %}
+                <div class="problem-item">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4>{{ problem.problem_title }}</h4>
+                            <p>{{ problem.problem_details }}</p>
+                            {% if problem.repair_result %}
+                                <p style="color: #065F46;">نتيجة الإصلاح: {{ problem.repair_result }}</p>
+                            {% endif %}
+                        </div>
+                        <span class="status-badge {{ problem.status_class }}">{{ problem.status_text }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>لا توجد مشاكل مسجلة لهذا الجهاز.</p>
+        {% endif %}
+
+        <div class="footer">
+            <p>تم إنشاء هذا التقرير بواسطة نظام إدارة تذاكر الصيانة.</p>
+        </div>
+    </div>
+</body>
+</html>
+
